@@ -1,6 +1,6 @@
 import socket
 import threading
-
+import json
 
 host_name = socket.gethostname()
 host_ip = socket.gethostbyname(host_name)
@@ -12,13 +12,17 @@ def listening(client_conn, client_addr):
     #print the address of the client that just connected to the server
     with client_conn:
         while True:
-            data = client_conn.recv(1024)
+            data = client_conn.recv(65536)
             if not data:
                 break
             #decodesx and prints data from client 
-            rdata= data.decode('utf-8')
-            print(rdata)
-            client_conn.sendall(data)
+            rdata= data.decode('utf-8').strip()
+            if not rdata:
+                continue
+
+            print(f"{client_addr}: {rdata}")
+            http_response = "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: 7\r\nConnection: close\r\n\r\nAFFIRM!"
+            client_conn.sendall(str.encode(http_response))
 
 def start_server():
     server_socket.bind((host_ip, 6666))
