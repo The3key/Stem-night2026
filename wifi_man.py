@@ -36,6 +36,6 @@ def wificonnect(ssid,password):
     sys_log.write("[" + str(time.localtime()) + "]: " + str(internetconfig[0]))
     sys_log.flush()
     print('current ip: ' + str(internetconfig[0]))
-    return inernetconfig[0]
+    return internetconfig[0]
     
-wificonnect('wlan name','password here')
+
