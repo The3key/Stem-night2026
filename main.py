@@ -1,10 +1,10 @@
-import urequests
+import machine
 import time
 import wifi_man
 import ble_scanner
 import json
+import socket
 
-serv_addr = "http://blah.blah.blah:6666"
 Device_id  = "esp32-room_blank"
 
 
@@ -18,24 +18,27 @@ def build_payload(scan_results, device_id="esp32-01"):
 
 def send(payload):
     try:
-        headers = {"Content-Type": "application/json"}
-        res = urequests.post(serv_addr, data=payload, headers=headers)
-        print("response:", res.status_code, res.text)
-        res.close()
+        s = socket.socket()
+        s.connect((hi, 6666))
+        s.send(payload.encode('utf-8'))
+        response = s.recv(1048576)
+        print("response:", response.decode('utf-8'))
+        s.close()
     except Exception as e:
         print("failed. error:", e)
 
-wifi_man.wificonnect("workstation","passowrd")
+wifi_man.wificonnect("hi","hi")
 
-while True:
-    print("Scanning BLE...")
-    beacons = ble_scanner.scan(duration_ms=5000)
-    print(f"found {len(beacons)} beacons")
 
-    payload = build_payload(beacons, Device_id)
-    #print("payload:", payload)
+print("Scanning BLE...")
+beacons = ble_scanner.scan(duration_ms=5000)
+print(f"found {len(beacons)} beacons")
 
-    response = send(payload)
-    time.sleep(1)
-    if response and "AFFIRM" in response:
-        print("Affirmed, rescanning...")
+payload = build_payload(beacons, Device_id)
+    
+
+response = send(payload)
+time.sleep(10)
+machine.reset()
+    
+        
