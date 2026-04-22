@@ -1,28 +1,24 @@
 import socket
 import threading
-import json
+
 
 host_name = socket.gethostname()
 host_ip = socket.gethostbyname(host_name)
 #grab hostname and ip address of the server machine
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
+f = open("data.txt", "a")
 def listening(client_conn, client_addr):
     print(f"Connected by {client_addr}")
     #print the address of the client that just connected to the server
     with client_conn:
-        while True:
-            data = client_conn.recv(65536)
-            if not data:
-                break
-            #decodesx and prints data from client 
-            rdata= data.decode('utf-8').strip()
-            if not rdata:
-                continue
+    
+        data = client_conn.recv(1048576)
 
-            print(f"{client_addr}: {rdata}")
-            http_response = "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: 7\r\nConnection: close\r\n\r\nAFFIRM!"
-            client_conn.sendall(str.encode(http_response))
+        rdata = data.decode('utf-8')
+
+        print(f"{client_addr}: {rdata}")
+        f.write(f"{client_addr}: {rdata}\n")
+        client_conn.sendall(str.encode("AFFIRM!"))
 
 def start_server():
     server_socket.bind((host_ip, 6666))
