@@ -1,4 +1,4 @@
-import machine
+    import machine
 import time
 import wifi_man
 import ble_scanner
@@ -27,7 +27,7 @@ def send(payload):
     except Exception as e:
         print("failed. error:", e)
 
-wifi_man.wificonnect("hi","hi")
+wifi_man.wificonnect("workstation","password")
 
 
 print("Scanning BLE...")
